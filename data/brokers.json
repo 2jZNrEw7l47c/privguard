@@ -655,5 +655,381 @@
     "requires_email_verification": true,
     "requires_id_verification": false,
     "manual_instructions": null
+  },
+  {
+    "id": "zoominfo",
+    "name": "ZoomInfo",
+    "category": "marketing_database",
+    "opt_out_url": "https://www.zoominfo.com/about/privacy/privacychoice",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.zoominfo.com/about/privacy/privacychoice\n2. Click 'Do Not Sell or Share My Personal Information'.\n3. Enter your name and email address.\n4. Complete the CAPTCHA and submit.\n5. You will receive a confirmation email within 72 hours."
+  },
+  {
+    "id": "clearbit",
+    "name": "Clearbit",
+    "category": "marketing_database",
+    "opt_out_url": "https://clearbit.com/privacy-request",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://clearbit.com/privacy-request\n2. Select 'Delete my personal data'.\n3. Enter your email address and submit.\n4. Clearbit will process the request within 30 days."
+  },
+  {
+    "id": "apollo_io",
+    "name": "Apollo.io",
+    "category": "marketing_database",
+    "opt_out_url": "https://www.apollo.io/privacy-policy/remove",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.apollo.io/privacy-policy/remove\n2. Enter your first name, last name, and email address.\n3. Click 'Submit Request'.\n4. Apollo will remove your data within 30 days."
+  },
+  {
+    "id": "fullcontact",
+    "name": "FullContact",
+    "category": "marketing_database",
+    "opt_out_url": "https://www.fullcontact.com/privacy/privacy-request/",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.fullcontact.com/privacy/privacy-request/\n2. Select 'Delete My Data'.\n3. Enter your email address.\n4. Submit. FullContact processes requests within 45 days."
+  },
+  {
+    "id": "bombora",
+    "name": "Bombora",
+    "category": "marketing_database",
+    "opt_out_url": "https://bombora.com/privacy/",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://bombora.com/privacy/\n2. Scroll to 'Your Privacy Rights' and click 'Submit a Request'.\n3. Select 'Delete' and provide your email address.\n4. Submit the form."
+  },
+  {
+    "id": "epsilon",
+    "name": "Epsilon / Conversant",
+    "category": "marketing_database",
+    "opt_out_url": "https://www.epsilon.com/us/privacy-policy/privacy-request",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.epsilon.com/us/privacy-policy/privacy-request\n2. Select 'Delete My Personal Information'.\n3. Fill in your name, email, and state.\n4. Submit. Epsilon responds within 45 days."
+  },
+  {
+    "id": "neustar",
+    "name": "Neustar / TransUnion Marketing",
+    "category": "marketing_database",
+    "opt_out_url": "https://www.home.neustar/privacy/privacy-request",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.home.neustar/privacy/privacy-request\n2. Select 'Opt Out of Sale of Personal Data'.\n3. Enter your name and email.\n4. Submit the form."
+  },
+  {
+    "id": "acxiom_marketing",
+    "name": "Acxiom",
+    "category": "marketing_database",
+    "opt_out_url": "https://isapps.acxiom.com/optout/optout.aspx",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "addressLine1": "{street}",
+      "city": "{city}",
+      "state": "{state}",
+      "zipCode": "{zip}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "oracle_bluekai",
+    "name": "Oracle Data Cloud (BlueKai)",
+    "category": "marketing_database",
+    "opt_out_url": "https://datacloudoptout.oracle.com/optout",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://datacloudoptout.oracle.com/optout\n2. Click 'Opt Out' to opt out of all Oracle Data Cloud interest-based advertising.\n3. Note: this opt-out is cookie-based — repeat on each browser you use."
+  },
+  {
+    "id": "lexisnexis_aggregator",
+    "name": "LexisNexis Risk Solutions",
+    "category": "data_aggregator",
+    "opt_out_url": "https://optout.lexisnexis.com/",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": true,
+    "manual_instructions": "1. Go to https://optout.lexisnexis.com/\n2. Click 'Opt Out'.\n3. Enter your first name, last name, address, and date of birth.\n4. You will need to upload a government-issued photo ID.\n5. Submit. LexisNexis responds within 30 days."
+  },
+  {
+    "id": "corelogic_aggregator",
+    "name": "CoreLogic",
+    "category": "data_aggregator",
+    "opt_out_url": "https://www.corelogic.com/privacy/",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.corelogic.com/privacy/\n2. Scroll to 'California Consumer Rights' or 'Privacy Requests'.\n3. Click 'Submit a Privacy Request'.\n4. Select 'Delete My Personal Information' and complete the form.\n5. CoreLogic responds within 45 days."
+  },
+  {
+    "id": "versium",
+    "name": "Versium",
+    "category": "data_aggregator",
+    "opt_out_url": "https://versium.com/privacy-policy/",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://versium.com/privacy-policy/\n2. Scroll to 'Your Privacy Rights' section.\n3. Email privacy@versium.com with subject 'Data Deletion Request'.\n4. Include your full name, email address, and mailing address."
+  },
+  {
+    "id": "equifax_ixi",
+    "name": "Equifax IXI Services",
+    "category": "data_aggregator",
+    "opt_out_url": "https://www.equifax.com/personal/privacy/",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.equifax.com/personal/privacy/\n2. Click 'Submit a Privacy Request'.\n3. Select 'Delete My Personal Information'.\n4. Complete identity verification and submit.\n5. Equifax responds within 45 days."
+  },
+  {
+    "id": "transunion_tlo",
+    "name": "TransUnion TLO",
+    "category": "data_aggregator",
+    "opt_out_url": "https://www.transunion.com/consumer-privacy",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.transunion.com/consumer-privacy\n2. Click 'Do Not Sell or Share My Personal Information'.\n3. Follow the identity verification steps.\n4. Submit your deletion request."
+  },
+  {
+    "id": "datalogix",
+    "name": "Oracle DataLogix",
+    "category": "data_aggregator",
+    "opt_out_url": "https://datacloudoptout.oracle.com/registry",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://datacloudoptout.oracle.com/registry\n2. Click 'Remove My Information'.\n3. Enter your name, email, and postal address.\n4. Submit the form."
+  },
+  {
+    "id": "spydialer",
+    "name": "Spy Dialer",
+    "category": "phone_lookup",
+    "opt_out_url": "https://www.spydialer.com/optout.aspx",
+    "submission_method": "playwright",
+    "form_fields": {
+      "phone": "{phone}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "numlookup",
+    "name": "NumLookup",
+    "category": "phone_lookup",
+    "opt_out_url": "https://www.numlookup.com/opt-out",
+    "submission_method": "playwright",
+    "form_fields": {
+      "phone": "{phone}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "usphonebook_phone",
+    "name": "USPhoneBook",
+    "category": "phone_lookup",
+    "opt_out_url": "https://www.usphonebook.com/opt-out",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.usphonebook.com/opt-out\n2. Search for your phone number or name.\n3. Click 'Remove' next to your listing.\n4. Complete the CAPTCHA and confirm."
+  },
+  {
+    "id": "411_com",
+    "name": "411.com",
+    "category": "phone_lookup",
+    "opt_out_url": "https://www.411.com/privacy/edit",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.411.com/privacy/edit\n2. Enter your name, city, and state to find your listing.\n3. Click 'Remove Listing' next to your entry.\n4. Enter your email to confirm removal."
+  },
+  {
+    "id": "whocalledme",
+    "name": "WhoCalledMe",
+    "category": "phone_lookup",
+    "opt_out_url": "https://www.whocalledme.com/Privacy",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.whocalledme.com/Privacy\n2. Submit a removal request using the contact form.\n3. Include your phone number and name in the request."
+  },
+  {
+    "id": "anywho_phone",
+    "name": "AnyWho",
+    "category": "phone_lookup",
+    "opt_out_url": "https://www.anywho.com/optout",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.anywho.com/optout\n2. Enter your first name, last name, city, and state.\n3. Find your listing and click 'Opt Out'.\n4. Enter your email to confirm."
+  },
+  {
+    "id": "addresses_com",
+    "name": "Addresses.com",
+    "category": "address_lookup",
+    "opt_out_url": "https://www.addresses.com/optout.php",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstname": "{first_name}",
+      "lastname": "{last_name}",
+      "city": "{city}",
+      "state": "{state}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "publicrecordsnow_address",
+    "name": "PublicRecordsNow",
+    "category": "address_lookup",
+    "opt_out_url": "https://www.publicrecordsnow.com/removal-request/",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.publicrecordsnow.com/removal-request/\n2. Enter your full name and state.\n3. Find your record and click 'Remove This Record'.\n4. Submit the form with your email address."
+  },
+  {
+    "id": "ussearch_address",
+    "name": "US Search",
+    "category": "address_lookup",
+    "opt_out_url": "https://www.ussearch.com/opt-out/submit/",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "checkpeople_address",
+    "name": "CheckPeople",
+    "category": "address_lookup",
+    "opt_out_url": "https://checkpeople.com/opt-out",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://checkpeople.com/opt-out\n2. Search for your name and state.\n3. Select your record and click 'Remove This Record'.\n4. Enter your email and submit."
+  },
+  {
+    "id": "mugshotlook",
+    "name": "MugshotLook",
+    "category": "mugshot_arrest",
+    "opt_out_url": "https://mugshotlook.com/removal-request",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": true,
+    "manual_instructions": "1. Go to https://mugshotlook.com/removal-request\n2. Enter the URL of your mugshot page.\n3. Provide your full name and email address.\n4. Upload a copy of a government-issued photo ID.\n5. Submit. Processing takes 3–7 business days."
+  },
+  {
+    "id": "arrests_org",
+    "name": "Arrests.org",
+    "category": "mugshot_arrest",
+    "opt_out_url": "https://arrests.org/remove.php",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": true,
+    "manual_instructions": "1. Go to https://arrests.org/remove.php\n2. Enter the URL of your listing on arrests.org.\n3. Provide your full name and contact email.\n4. Upload a government-issued photo ID.\n5. Submit. Removal takes up to 10 business days."
+  },
+  {
+    "id": "staterecords_org",
+    "name": "StateRecords.org",
+    "category": "mugshot_arrest",
+    "opt_out_url": "https://staterecords.org/removal-request.php",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://staterecords.org/removal-request.php\n2. Enter the URL of your record page.\n3. Provide your email address.\n4. Submit the request."
+  },
+  {
+    "id": "courtcasefinder",
+    "name": "CourtCaseFinder",
+    "category": "mugshot_arrest",
+    "opt_out_url": "https://www.courtcasefinder.com/remove",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.courtcasefinder.com/remove\n2. Search for your name.\n3. Click 'Remove This Record' next to your listing.\n4. Provide your email address to confirm removal."
+  },
+  {
+    "id": "justmugshots",
+    "name": "JustMugshots",
+    "category": "mugshot_arrest",
+    "opt_out_url": "https://justmugshots.com/removal",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": true,
+    "manual_instructions": "1. Go to https://justmugshots.com/removal\n2. Search for your listing.\n3. Click 'Request Removal' on your record.\n4. Upload a government-issued photo ID.\n5. Submit. Processing takes 5–10 business days."
+  },
+  {
+    "id": "bustedmugshots",
+    "name": "BustedMugshots",
+    "category": "mugshot_arrest",
+    "opt_out_url": "https://bustedmugshots.com/removal",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": true,
+    "manual_instructions": "1. Go to https://bustedmugshots.com/removal\n2. Find your listing by searching your name.\n3. Click 'Remove This Record'.\n4. Complete identity verification with a government ID.\n5. Submit. Processing takes 5–7 business days."
+  },
+  {
+    "id": "mugshotzone",
+    "name": "MugshotZone",
+    "category": "mugshot_arrest",
+    "opt_out_url": "https://mugshotzone.com/opt-out",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://mugshotzone.com/opt-out\n2. Enter the URL of your listing.\n3. Provide your name and email.\n4. Submit the removal request."
   }
 ]
