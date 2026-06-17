@@ -1,6 +1,19 @@
 # PrivGuard
 
-**v1.0.0 — CLI edition** · [Changelog](CHANGELOG.md)
+**v2.0.0 — Web Dashboard** · [Changelog](CHANGELOG.md)
+
+## Quick Start
+
+```bash
+pip install -e .
+npm install --prefix web
+playwright install chromium
+privguard serve
+```
+
+Open http://localhost:3000 and enter your master password to unlock the vault.
+
+---
 
 **Take back control of your personal information.**
 
