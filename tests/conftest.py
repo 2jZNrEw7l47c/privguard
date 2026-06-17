@@ -2,6 +2,8 @@
 import pytest
 import privguard.vault as _vault_module
 
+pytest_plugins = ["tests.conftest_api"]
+
 
 @pytest.fixture(autouse=True)
 def _fast_kdf(monkeypatch):
