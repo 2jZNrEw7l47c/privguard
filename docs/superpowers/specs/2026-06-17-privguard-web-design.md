@@ -13,7 +13,10 @@ Replace the PrivGuard CLI and Excel reports with a local web dashboard. A FastAP
 ## Goals
 
 - Replace `privguard` CLI commands with a browser dashboard at `localhost:3000`
-- Keep all existing Python logic unchanged (vault.py, scanner.py, submitter.py, db.py, brokers.json)
+- Keep all existing Python logic unchanged (vault.py, submitter.py, db.py)
+- Expand `brokers.json` from 44 to ~200 entries (marketing databases, phone lookup, mugshot/arrest sites)
+- Add five more social platforms to scanner.py (Instagram, TikTok, Reddit, YouTube, Pinterest)
+- Add ad network opt-out as a new scan source in scanner.py (NAI, DAA)
 - Show live scan progress in the browser via Server-Sent Events
 - Replace Excel reports with filterable in-browser tables
 - Single command to start everything: `privguard serve`
@@ -35,11 +38,11 @@ Replace the PrivGuard CLI and Excel reports with a local web dashboard. A FastAP
 
 ```
 online_security/
-├── privguard/           # UNCHANGED — existing Python modules
-│   ├── vault.py
-│   ├── scanner.py
-│   ├── submitter.py
-│   ├── db.py
+├── privguard/           # mostly unchanged — see Data Sources section for scanner.py additions
+│   ├── vault.py         # UNCHANGED
+│   ├── scanner.py       # MODIFIED: add social platforms + ad_networks source
+│   ├── submitter.py     # UNCHANGED
+│   ├── db.py            # UNCHANGED
 │   └── __init__.py
 ├── api/                 # NEW — FastAPI application
 │   ├── __init__.py
@@ -68,9 +71,59 @@ online_security/
 │   │   └── api.ts                          # Typed fetch wrappers for FastAPI
 │   └── package.json
 ├── data/
-│   └── brokers.json     # UNCHANGED
+│   └── brokers.json     # EXPANDED: ~44 → ~200 entries (see Data Sources section)
 ├── pyproject.toml       # adds fastapi, uvicorn to deps
 └── README.md            # updated for web UI
+```
+
+---
+
+## Data Sources (Expanded)
+
+### brokers.json — expanded to ~200 entries
+
+New categories added beyond the original 44 people-search sites:
+
+| Category | Examples | Submission method |
+|----------|----------|-------------------|
+| Marketing / lead-gen databases | ZoomInfo, Clearbit, Apollo.io, Bombora, FullContact, Epsilon, Neustar, Acxiom, Oracle BlueKai | `manual` (require business email or verification) |
+| Data aggregators / resellers | LexisNexis, CoreLogic, DataLogix, Versium, Equifax IXI, TransUnion TLO | `manual` |
+| Phone lookup sites | Spy Dialer, NumLookup, USPhoneBook, 411.com, WhoCalledMe, AnyWho | `playwright` or `manual` |
+| Address / property lookup | Addresses.com, PublicRecordsNow, USSearch, CheckPeople | `playwright` or `manual` |
+| Mugshot / arrest record sites | MugshotLook, arrests.org, StateRecords.org, CourtCaseFinder, JustMugshots, BustedMugshots, MugshotZone, Mugshots.com | `manual` (ID verification required) |
+
+All existing 44 entries are preserved. Only the JSON file changes — no code modifications to scanner.py or submitter.py.
+
+### scanner.py — new and expanded sources
+
+**Expanded social platforms** (`_SOCIAL_SITES` list):
+
+Added to the existing Facebook, LinkedIn, Twitter/X entries:
+- Instagram — `https://www.instagram.com/{name_slug}/`
+- TikTok — `https://www.tiktok.com/@{name_slug}`
+- Reddit — `https://www.reddit.com/search/?q={full_name}&type=user`
+- YouTube — `https://www.youtube.com/results?search_query={full_name}`
+- Pinterest — `https://www.pinterest.com/search/users/?q={full_name}`
+
+All use the same Playwright page-content check already in `_scan_social`. No structural code changes.
+
+**Ad network opt-outs** — new source `"ad_networks"`:
+
+New `_scan_ad_networks()` function added to scanner.py, called when `source in (None, "ad_networks")`. Checks two opt-out endpoints via HTTP HEAD (same pattern as broker scanning):
+
+| Site | ID | Opt-out URL | Method |
+|------|----|-------------|--------|
+| NAI (Network Advertising Initiative) | `nai_optout` | `https://optout.networkadvertising.org/` | `manual` |
+| DAA (Digital Advertising Alliance) | `daa_optout` | `https://optout.aboutads.info/` | `manual` |
+| Google Ad Personalization | `google_ads` | `https://adssettings.google.com/` | `manual` |
+| Facebook Off-Facebook Activity | `facebook_offsite` | `https://www.facebook.com/off_facebook_activity/` | `manual` |
+
+All four are `manual` — the sites require browser interaction or account login. They are stored with `status="manual_required"` and step-by-step `manual_instructions`. The `--source ad_networks` CLI/API flag selects only this source.
+
+The `scan_user()` function in scanner.py gains one new branch:
+```python
+if source is None or source == "ad_networks":
+    _scan_ad_networks(profile, force=force, db_path=db_path)
 ```
 
 ---
@@ -92,7 +145,7 @@ Session lifetime: until server restart or `POST /api/auth/lock`. The password is
 | `GET` | `/api/users` | List profiles from in-memory vault |
 | `POST` | `/api/users` | Add new profile, re-encrypt and save vault |
 | `DELETE` | `/api/users/{name}` | Remove profile, re-encrypt and save vault |
-| `POST` | `/api/users/{name}/scan` | Start background scan task, return `job_id` |
+| `POST` | `/api/users/{name}/scan` | Start background scan task, return `job_id`. Optional body: `{"source": "brokers"\|"hibp"\|"social"\|"search_engines"\|"ad_networks"}` |
 | `POST` | `/api/users/{name}/submit` | Start background submission task, return `job_id` |
 | `GET` | `/api/users/{name}/findings` | Return findings from SQLite |
 | `GET` | `/api/users/{name}/breaches` | Return breaches from SQLite |
@@ -142,11 +195,12 @@ Session lifetime: until server restart or `POST /api/auth/lock`. The password is
   - **Breaches (HIBP)** — email, breach name, date, exposed data types, HIBP link
   - **Social Platforms** — platform, profile URL, public fields exposed
   - **Search Engines** — engine, status, removal URL, date submitted
+  - **Ad Networks** — network name, status, opt-out URL, manual instructions link
 - "Run Scan" and "Submit Removals" buttons in header
 
 **Scan Progress (`/users/[name]/scan`)**
-- Live log: one line per broker checked, status badge appended as events arrive via SSE
-- Progress bar: `N / 44 brokers checked`
+- Live log: one line per site checked, grouped by source (brokers, social, ad networks, search engines)
+- Progress bar: `N / ~200 brokers checked` (broker count only; other sources shown as separate counters)
 - Auto-redirects back to user detail page when scan completes
 
 **Add Profile (`/users/new`)**
