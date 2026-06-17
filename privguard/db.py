@@ -159,6 +159,19 @@ def get_findings(
         conn.close()
 
 
+def update_listing_url(finding_id: int, listing_url: str, db_path: Path = DB_PATH) -> None:
+    """Backfill listing_url for a finding that was scanned before search_url templates existed."""
+    conn = _connect(db_path)
+    try:
+        conn.execute(
+            "UPDATE findings SET listing_url = ? WHERE id = ? AND listing_url IS NULL",
+            (listing_url, finding_id),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def update_finding_status(
     finding_id: int,
     status: str,
