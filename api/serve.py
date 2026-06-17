@@ -62,3 +62,7 @@ def main() -> None:
     except KeyboardInterrupt:
         api_proc.terminate()
         next_proc.terminate()
+
+
+if __name__ == "__main__":
+    main()
