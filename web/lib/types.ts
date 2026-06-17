@@ -25,6 +25,7 @@ export interface Finding {
   site_name: string;
   status: FindingStatus;
   opt_out_url: string | null;
+  listing_url: string | null;
   manual_instructions: string | null;
   last_checked: string | null;
   submitted_at: string | null;

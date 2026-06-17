@@ -73,31 +73,26 @@ export function FindingsTable({ findings, filter, onStatusChange }: Props) {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex flex-col gap-1">
-                    {f.opt_out_url && (() => {
-                      let siteRoot: string | null = null;
-                      try { siteRoot = new URL(f.opt_out_url).origin; } catch {}
-                      return siteRoot ? (
-                        <a
-                          href={siteRoot}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-400 hover:text-blue-300 text-xs"
-                        >
-                          View Site ↗
+                    {f.listing_url ? (
+                      <a href={f.listing_url} target="_blank" rel="noopener noreferrer"
+                         className="text-blue-400 hover:text-blue-300 text-xs">
+                        View Listing ↗
+                      </a>
+                    ) : f.opt_out_url && (() => {
+                      let origin: string | null = null;
+                      try { origin = new URL(f.opt_out_url).origin; } catch {}
+                      return origin ? (
+                        <a href={origin} target="_blank" rel="noopener noreferrer"
+                           className="text-blue-400 hover:text-blue-300 text-xs opacity-60">
+                          Visit Site ↗
                         </a>
                       ) : null;
                     })()}
-                    {f.opt_out_url ? (
-                      <a
-                        href={f.opt_out_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-accent hover:text-accent-hover text-xs"
-                      >
+                    {f.opt_out_url && (
+                      <a href={f.opt_out_url} target="_blank" rel="noopener noreferrer"
+                         className="text-accent hover:text-accent-hover text-xs">
                         Opt-Out ↗
                       </a>
-                    ) : (
-                      <span className="text-muted text-xs">—</span>
                     )}
                   </div>
                 </td>
