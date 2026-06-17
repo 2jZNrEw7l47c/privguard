@@ -379,6 +379,58 @@ class TestSummarySheet:
 
         assert self._get_summary_value(ws, "Profile Name") == "Alice Smith"
 
+    def test_summary_header_row_content(self, tmp_path, db):
+        import openpyxl
+
+        conn, db_file = db
+        conn.commit()
+
+        out = generate_report(_profile(), tmp_path, db_path=db_file)
+        wb = openpyxl.load_workbook(out)
+        ws = wb["Summary"]
+
+        assert ws.cell(row=1, column=1).value == "Field"
+        assert ws.cell(row=1, column=2).value == "Value"
+
+    def test_summary_header_row_is_styled(self, tmp_path, db):
+        import openpyxl
+
+        conn, db_file = db
+        conn.commit()
+
+        out = generate_report(_profile(), tmp_path, db_path=db_file)
+        wb = openpyxl.load_workbook(out)
+        ws = wb["Summary"]
+
+        header_cell = ws.cell(row=1, column=1)
+        assert header_cell.fill.fgColor.rgb != "00000000"
+        assert header_cell.font.bold is True
+
+    def test_summary_contains_all_required_rows(self, tmp_path, db):
+        import openpyxl
+
+        conn, db_file = db
+        conn.commit()
+
+        out = generate_report(_profile(), tmp_path, db_path=db_file)
+        wb = openpyxl.load_workbook(out)
+        ws = wb["Summary"]
+
+        labels = [ws.cell(row=r, column=1).value for r in range(2, ws.max_row + 1)]
+        expected = [
+            "Profile Name",
+            "Scan Date",
+            "Total Sites Checked",
+            "Exposures Found",
+            "Auto-Submitted",
+            "Pending Email Verification",
+            "Manual Action Required",
+            "Breaches Found",
+            "Exposure Risk Score",
+        ]
+        for label in expected:
+            assert label in labels, f"Missing summary row: {label!r}"
+
 
 class TestBreachesSheet:
     def test_headers_correct(self, tmp_path, db):
