@@ -712,8 +712,8 @@
     "manual_instructions": "1. Go to https://bombora.com/privacy/\n2. Scroll to 'Your Privacy Rights' and click 'Submit a Request'.\n3. Select 'Delete' and provide your email address.\n4. Submit the form."
   },
   {
-    "id": "epsilon",
-    "name": "Epsilon / Conversant",
+    "id": "epsilon_marketing",
+    "name": "Epsilon / Conversant (Marketing)",
     "category": "marketing_database",
     "opt_out_url": "https://www.epsilon.com/us/privacy-policy/privacy-request",
     "submission_method": "manual",
@@ -735,7 +735,7 @@
   },
   {
     "id": "acxiom_marketing",
-    "name": "Acxiom",
+    "name": "Acxiom (Marketing)",
     "category": "marketing_database",
     "opt_out_url": "https://isapps.acxiom.com/optout/optout.aspx",
     "submission_method": "playwright",
@@ -765,7 +765,7 @@
   },
   {
     "id": "lexisnexis_aggregator",
-    "name": "LexisNexis Risk Solutions",
+    "name": "LexisNexis Risk Solutions (Aggregator)",
     "category": "data_aggregator",
     "opt_out_url": "https://optout.lexisnexis.com/",
     "submission_method": "manual",
@@ -776,7 +776,7 @@
   },
   {
     "id": "corelogic_aggregator",
-    "name": "CoreLogic",
+    "name": "CoreLogic (Aggregator)",
     "category": "data_aggregator",
     "opt_out_url": "https://www.corelogic.com/privacy/",
     "submission_method": "manual",
@@ -859,7 +859,7 @@
   },
   {
     "id": "usphonebook_phone",
-    "name": "USPhoneBook",
+    "name": "USPhoneBook (Phone Lookup)",
     "category": "phone_lookup",
     "opt_out_url": "https://www.usphonebook.com/opt-out",
     "submission_method": "manual",
@@ -892,7 +892,7 @@
   },
   {
     "id": "anywho_phone",
-    "name": "AnyWho",
+    "name": "AnyWho (Phone Lookup)",
     "category": "phone_lookup",
     "opt_out_url": "https://www.anywho.com/optout",
     "submission_method": "manual",
@@ -903,7 +903,7 @@
   },
   {
     "id": "addresses_com",
-    "name": "Addresses.com",
+    "name": "Addresses.com (Address Lookup)",
     "category": "address_lookup",
     "opt_out_url": "https://www.addresses.com/optout.php",
     "submission_method": "playwright",
@@ -919,7 +919,7 @@
   },
   {
     "id": "publicrecordsnow_address",
-    "name": "PublicRecordsNow",
+    "name": "PublicRecordsNow (Address Lookup)",
     "category": "address_lookup",
     "opt_out_url": "https://www.publicrecordsnow.com/removal-request/",
     "submission_method": "manual",
@@ -930,7 +930,7 @@
   },
   {
     "id": "ussearch_address",
-    "name": "US Search",
+    "name": "US Search (Address Lookup)",
     "category": "address_lookup",
     "opt_out_url": "https://www.ussearch.com/opt-out/submit/",
     "submission_method": "playwright",
@@ -946,7 +946,7 @@
   },
   {
     "id": "checkpeople_address",
-    "name": "CheckPeople",
+    "name": "CheckPeople (Address Lookup)",
     "category": "address_lookup",
     "opt_out_url": "https://checkpeople.com/opt-out",
     "submission_method": "manual",
