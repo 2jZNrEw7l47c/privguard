@@ -12,6 +12,7 @@ const FINDINGS: Finding[] = [
     site_name: "Whitepages",
     status: "found",
     opt_out_url: "https://whitepages.com/opt-out",
+    listing_url: "https://www.whitepages.com/name/Alice+Test/Portland-OR",
     manual_instructions: null,
     last_checked: "2026-06-17T10:00:00",
     submitted_at: null,
@@ -24,6 +25,7 @@ const FINDINGS: Finding[] = [
     site_name: "Spokeo",
     status: "cleared",
     opt_out_url: "https://spokeo.com/opt-out",
+    listing_url: null,
     manual_instructions: null,
     last_checked: "2026-06-17T10:00:00",
     submitted_at: "2026-06-17T10:05:00",
@@ -37,23 +39,24 @@ describe("FindingsTable", () => {
     expect(screen.getByText("Spokeo")).toBeInTheDocument();
   });
 
-  it("renders status badges", () => {
+  it("renders detection badges", () => {
     render(<FindingsTable findings={FINDINGS} onStatusChange={vi.fn()} />);
-    expect(screen.getByText("Found")).toBeInTheDocument();
-    expect(screen.getByText("Cleared")).toBeInTheDocument();
+    expect(screen.getAllByText("Exposed").length).toBeGreaterThan(0);
+    expect(screen.getByText("Cleared ✓")).toBeInTheDocument();
   });
 
-  it("renders opt-out links", () => {
+  it("renders listing and opt-out links", () => {
     render(<FindingsTable findings={FINDINGS} onStatusChange={vi.fn()} />);
     const links = screen.getAllByRole("link");
     expect(links.some((l) => l.getAttribute("href")?.includes("whitepages"))).toBe(true);
+    expect(screen.getByText("View Listing ↗")).toBeInTheDocument();
   });
 
-  it("calls onStatusChange when clear button clicked", () => {
+  it("calls onStatusChange when Mark Cleared button clicked", () => {
     const onStatusChange = vi.fn();
     render(<FindingsTable findings={FINDINGS} onStatusChange={onStatusChange} />);
-    const clearButtons = screen.getAllByTitle("Mark as cleared");
-    fireEvent.click(clearButtons[0]);
+    const clearBtn = screen.getByText("Mark Cleared");
+    fireEvent.click(clearBtn);
     expect(onStatusChange).toHaveBeenCalledWith(1, "cleared");
   });
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { Finding, FindingStatus } from "@/lib/types";
 
 interface Props {
@@ -10,6 +10,24 @@ interface Props {
 }
 
 const SOURCES = ["all", "brokers", "hibp", "social", "search_engines", "ad_networks"] as const;
+const STATUS_FILTERS = [
+  { value: "all",                  label: "All" },
+  { value: "exposed",              label: "Exposed" },
+  { value: "found",                label: "No Action Yet" },
+  { value: "submitted",            label: "Submitted" },
+  { value: "pending_verification", label: "Awaiting Email" },
+  { value: "manual_required",      label: "Manual Required" },
+  { value: "cleared",              label: "Cleared" },
+  { value: "not_found",            label: "Not Found" },
+] as const;
+
+type SortKey = "site" | "detection" | "removal" | "date";
+type SortDir = "asc" | "desc";
+
+const REMOVAL_ORDER: Record<string, number> = {
+  manual_required: 0, found: 1, pending_verification: 2,
+  submitted: 3, cleared: 4, not_found: 5,
+};
 
 // Was the user's data detected on this site?
 function DetectionBadge({ status }: { status: string }) {
@@ -45,16 +63,55 @@ function RemovalBadge({ status }: { status: string }) {
   );
 }
 
+function SortButton({ col, current, dir, onClick }: {
+  col: SortKey; current: SortKey; dir: SortDir; onClick: () => void;
+}) {
+  const active = col === current;
+  return (
+    <button onClick={onClick} className="inline-flex items-center gap-1 hover:text-gray-100 transition-colors">
+      {col === "site" ? "Site" : col === "detection" ? "Detection" : col === "removal" ? "Removal" : "Date"}
+      <span className={active ? "text-accent" : "text-muted/40"}>
+        {active ? (dir === "asc" ? "↑" : "↓") : "↕"}
+      </span>
+    </button>
+  );
+}
+
 export function FindingsTable({ findings, filter, onStatusChange }: Props) {
   const [sourceFilter, setSourceFilter] = useState<string>(filter?.source ?? "all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [search, setSearch]             = useState("");
+  const [sortKey, setSortKey]           = useState<SortKey>("detection");
+  const [sortDir, setSortDir]           = useState<SortDir>("asc");
 
-  const visible = findings.filter((f) => {
-    if (sourceFilter !== "all" && f.source !== sourceFilter) return false;
-    if (filter?.status && f.status !== filter.status) return false;
-    return true;
-  });
+  function toggleSort(key: SortKey) {
+    if (sortKey === key) setSortDir(d => d === "asc" ? "desc" : "asc");
+    else { setSortKey(key); setSortDir("asc"); }
+  }
 
-  if (visible.length === 0) {
+  const visible = useMemo(() => {
+    let rows = findings.filter((f) => {
+      if (sourceFilter !== "all" && f.source !== sourceFilter) return false;
+      if (filter?.status && f.status !== filter.status) return false;
+      if (statusFilter === "exposed" && f.status === "not_found") return false;
+      else if (statusFilter !== "all" && statusFilter !== "exposed" && f.status !== statusFilter) return false;
+      if (search && !f.site_name.toLowerCase().includes(search.toLowerCase())) return false;
+      return true;
+    });
+
+    rows = [...rows].sort((a, b) => {
+      let cmp = 0;
+      if (sortKey === "site")      cmp = a.site_name.localeCompare(b.site_name);
+      if (sortKey === "detection") cmp = (a.status === "not_found" ? 1 : 0) - (b.status === "not_found" ? 1 : 0);
+      if (sortKey === "removal")   cmp = (REMOVAL_ORDER[a.status] ?? 9) - (REMOVAL_ORDER[b.status] ?? 9);
+      if (sortKey === "date")      cmp = (a.last_checked ?? "").localeCompare(b.last_checked ?? "");
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+
+    return rows;
+  }, [findings, sourceFilter, statusFilter, search, sortKey, sortDir, filter]);
+
+  if (findings.length === 0) {
     return (
       <div className="rounded-lg border border-border bg-panel p-8 text-center text-muted">
         No findings to display.
@@ -64,6 +121,40 @@ export function FindingsTable({ findings, filter, onStatusChange }: Props) {
 
   return (
     <div className="space-y-3">
+      {/* Search + status filter row */}
+      <div className="flex flex-wrap gap-3 items-center">
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search sites…"
+          className="rounded-md border border-border bg-panel px-3 py-1.5 text-sm text-gray-100 placeholder:text-muted focus:border-accent focus:outline-none w-44 transition-colors"
+        />
+        <div className="flex gap-1.5 flex-wrap">
+          {STATUS_FILTERS.map(sf => (
+            <button
+              key={sf.value}
+              onClick={() => setStatusFilter(sf.value)}
+              className={`rounded px-2.5 py-1 text-xs transition-colors ${
+                statusFilter === sf.value
+                  ? "bg-accent text-white"
+                  : "bg-panel text-muted hover:text-gray-100 border border-border"
+              }`}
+            >
+              {sf.label}
+              {sf.value !== "all" && (
+                <span className="ml-1 opacity-60">
+                  ({sf.value === "exposed"
+                    ? findings.filter(f => f.status !== "not_found").length
+                    : findings.filter(f => f.status === sf.value).length})
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Source tabs */}
       <div className="flex gap-2 flex-wrap">
         {SOURCES.map((s) => (
           <button
@@ -71,7 +162,7 @@ export function FindingsTable({ findings, filter, onStatusChange }: Props) {
             onClick={() => setSourceFilter(s)}
             className={`rounded px-3 py-1 text-xs capitalize transition-colors ${
               sourceFilter === s
-                ? "bg-accent text-white"
+                ? "bg-surface text-gray-100 border border-accent"
                 : "bg-panel text-muted hover:text-gray-100 border border-border"
             }`}
           >
@@ -80,6 +171,13 @@ export function FindingsTable({ findings, filter, onStatusChange }: Props) {
         ))}
       </div>
 
+      {visible.length === 0 ? (
+        <div className="rounded-lg border border-border bg-panel p-6 text-center text-muted text-sm">
+          No results match your filters.{" "}
+          <button onClick={() => { setSearch(""); setStatusFilter("all"); setSourceFilter("all"); }}
+            className="text-accent hover:underline">Clear filters</button>
+        </div>
+      ) : (
       <div className="overflow-x-auto rounded-lg border border-border">
         <table className="w-full text-sm">
           <thead className="text-left">
@@ -92,13 +190,19 @@ export function FindingsTable({ findings, filter, onStatusChange }: Props) {
               </th>
               <th className="bg-panel px-4 py-2 border-b border-border" />
             </tr>
-            <tr className="bg-panel text-muted">
-              <th className="px-4 py-2.5 font-medium text-xs">Site</th>
-              <th className="px-4 py-2.5 font-medium text-xs">Detection</th>
-              <th className="px-4 py-2.5 font-medium text-xs border-l border-border">Removal</th>
-              <th className="px-4 py-2.5 font-medium text-xs">View Listing</th>
-              <th className="px-4 py-2.5 font-medium text-xs">Opt-Out Link</th>
-              <th className="px-4 py-2.5 font-medium text-xs">Actions</th>
+            <tr className="bg-panel text-muted text-xs">
+              <th className="px-4 py-2.5 font-medium">
+                <SortButton col="site" current={sortKey} dir={sortDir} onClick={() => toggleSort("site")} />
+              </th>
+              <th className="px-4 py-2.5 font-medium">
+                <SortButton col="detection" current={sortKey} dir={sortDir} onClick={() => toggleSort("detection")} />
+              </th>
+              <th className="px-4 py-2.5 font-medium border-l border-border">
+                <SortButton col="removal" current={sortKey} dir={sortDir} onClick={() => toggleSort("removal")} />
+              </th>
+              <th className="px-4 py-2.5 font-medium">View Listing</th>
+              <th className="px-4 py-2.5 font-medium">Opt-Out Link</th>
+              <th className="px-4 py-2.5 font-medium">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -121,9 +225,13 @@ export function FindingsTable({ findings, filter, onStatusChange }: Props) {
                   <td className="px-4 py-3">
                     <DetectionBadge status={f.status} />
                     {f.last_checked && (
-                      <div className="mt-1 text-xs text-muted">
+                      <button
+                        onClick={() => toggleSort("date")}
+                        className="mt-1 text-xs text-muted hover:text-gray-300 transition-colors"
+                        title="Sort by date"
+                      >
                         {new Date(f.last_checked).toLocaleDateString()}
-                      </div>
+                      </button>
                     )}
                   </td>
                   <td className="px-4 py-3 border-l border-border">
@@ -170,6 +278,8 @@ export function FindingsTable({ findings, filter, onStatusChange }: Props) {
           </tbody>
         </table>
       </div>
+
+      )}
 
       {visible.some((f) => f.manual_instructions) && (
         <details className="rounded-lg border border-orange-900/50 bg-orange-950/20 p-4">
