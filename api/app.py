@@ -5,13 +5,16 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from fastapi import Cookie, Depends, FastAPI, HTTPException, Response
+from fastapi import Cookie, FastAPI, HTTPException, Response
 from pydantic import BaseModel
 
-from api.auth import create_session, destroy_session, get_session
+from api.auth import create_session, destroy_session
+from api.routes.users import router as users_router
 from privguard.vault import VAULT_PATH, load_vault
 
 app = FastAPI(title="PrivGuard API")
+
+app.include_router(users_router)
 
 
 def _vault_path() -> Path:
@@ -42,8 +45,3 @@ def lock(response: Response, session: Optional[str] = Cookie(default=None)):
         destroy_session(session)
     response.delete_cookie("session")
     return {"status": "locked"}
-
-
-@app.get("/api/users")
-def list_users_stub(session_data: dict = Depends(get_session)):
-    return session_data["vault"].get("users", [])
