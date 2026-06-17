@@ -1,1 +1,659 @@
-[]
+[
+  {
+    "id": "whitepages",
+    "name": "Whitepages",
+    "category": "data_broker",
+    "opt_out_url": "https://www.whitepages.com/suppression_requests/new",
+    "submission_method": "playwright",
+    "form_fields": {
+      "fname": "{first_name}",
+      "lname": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "spokeo",
+    "name": "Spokeo",
+    "category": "data_broker",
+    "opt_out_url": "https://www.spokeo.com/optout",
+    "submission_method": "playwright",
+    "form_fields": {
+      "email": "{primary_email}",
+      "listing_url": ""
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "beenverified",
+    "name": "BeenVerified",
+    "category": "data_broker",
+    "opt_out_url": "https://www.beenverified.com/app/optout/search",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "intelius",
+    "name": "Intelius",
+    "category": "data_broker",
+    "opt_out_url": "https://www.intelius.com/opt-out/submit",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "mylife",
+    "name": "MyLife",
+    "category": "data_broker",
+    "opt_out_url": "https://www.mylife.com/privacy/data-removal-request",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": true,
+    "manual_instructions": "1. Go to https://www.mylife.com/privacy/data-removal-request\n2. Fill in your full name, city, and state to locate your profile.\n3. Click 'Remove My Info' on your listing.\n4. Submit a government-issued photo ID (driver's license or passport) via the secure upload form.\n5. Wait up to 30 days for removal confirmation by email."
+  },
+  {
+    "id": "radaris",
+    "name": "Radaris",
+    "category": "data_broker",
+    "opt_out_url": "https://radaris.com/page/how-to-remove",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "fastpeoplesearch",
+    "name": "FastPeopleSearch",
+    "category": "data_broker",
+    "opt_out_url": "https://www.fastpeoplesearch.com/removal",
+    "submission_method": "playwright",
+    "form_fields": {
+      "full_name": "{full_name}",
+      "city": "{city}",
+      "state": "{state}"
+    },
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "peoplefinder",
+    "name": "PeopleFinder",
+    "category": "data_broker",
+    "opt_out_url": "https://www.peoplefinder.com/optout.php",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "peoplesmart",
+    "name": "PeopleSmart",
+    "category": "data_broker",
+    "opt_out_url": "https://www.peoplesmart.com/optout-go",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "truthfinder",
+    "name": "TruthFinder",
+    "category": "data_broker",
+    "opt_out_url": "https://www.truthfinder.com/opt-out/",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "instantcheckmate",
+    "name": "Instant Checkmate",
+    "category": "data_broker",
+    "opt_out_url": "https://www.instantcheckmate.com/opt-out/",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "ussearch",
+    "name": "US Search",
+    "category": "data_broker",
+    "opt_out_url": "https://www.ussearch.com/opt-out/submit",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "zabasearch",
+    "name": "ZabaSearch",
+    "category": "data_broker",
+    "opt_out_url": "https://www.zabasearch.com/block_records/",
+    "submission_method": "post",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "anywho",
+    "name": "AnyWho",
+    "category": "data_broker",
+    "opt_out_url": "https://www.anywho.com/privacyPolicy",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.anywho.com and search for your listing.\n2. Click on your listing to open your profile page.\n3. Scroll to the bottom and click 'Remove My Listing'.\n4. Complete the CAPTCHA verification.\n5. Your removal will be processed within 7 business days."
+  },
+  {
+    "id": "pipl",
+    "name": "Pipl",
+    "category": "data_broker",
+    "opt_out_url": "https://pipl.com/personal-information-removal-request",
+    "submission_method": "post",
+    "form_fields": {
+      "first_name": "{first_name}",
+      "last_name": "{last_name}",
+      "email": "{primary_email}",
+      "reason": "personal_privacy"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "acxiom",
+    "name": "Acxiom",
+    "category": "data_broker",
+    "opt_out_url": "https://isapps.acxiom.com/optout/optout.aspx",
+    "submission_method": "playwright",
+    "form_fields": {
+      "FirstName": "{first_name}",
+      "LastName": "{last_name}",
+      "Address": "{street}",
+      "City": "{city}",
+      "State": "{state}",
+      "Zip": "{zip}",
+      "Email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "lexisnexis",
+    "name": "LexisNexis",
+    "category": "data_broker",
+    "opt_out_url": "https://optout.lexisnexis.com/",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": true,
+    "manual_instructions": "1. Go to https://optout.lexisnexis.com/\n2. Click 'Opt Out' under the 'LexisNexis Risk Solutions' section.\n3. Fill in your full name, address, date of birth, and Social Security Number (last 4 digits only).\n4. Upload a copy of a government-issued photo ID.\n5. Submit the form and retain your confirmation number.\n6. Processing takes up to 30 days."
+  },
+  {
+    "id": "epsilon",
+    "name": "Epsilon",
+    "category": "data_broker",
+    "opt_out_url": "https://www.epsilon.com/us/privacy-policy/opt-out",
+    "submission_method": "post",
+    "form_fields": {
+      "first_name": "{first_name}",
+      "last_name": "{last_name}",
+      "email": "{primary_email}",
+      "address": "{street}",
+      "city": "{city}",
+      "state": "{state}",
+      "zip": "{zip}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "corelogic",
+    "name": "CoreLogic",
+    "category": "data_broker",
+    "opt_out_url": "https://optout.corelogic.com/",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "streetAddress": "{street}",
+      "city": "{city}",
+      "state": "{state}",
+      "zip": "{zip}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "checkpeople",
+    "name": "CheckPeople",
+    "category": "data_broker",
+    "opt_out_url": "https://www.checkpeople.com/optout",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "publicrecordsnow",
+    "name": "PublicRecordsNow",
+    "category": "data_broker",
+    "opt_out_url": "https://www.publicrecordsnow.com/static/view/optout",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "peoplelooker",
+    "name": "PeopleLooker",
+    "category": "data_broker",
+    "opt_out_url": "https://www.peoplelooker.com/f/optout/search",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "addresses",
+    "name": "Addresses.com",
+    "category": "data_broker",
+    "opt_out_url": "https://www.addresses.com/optout.php",
+    "submission_method": "post",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "backgroundalert",
+    "name": "BackgroundAlert",
+    "category": "data_broker",
+    "opt_out_url": "https://www.backgroundalert.com/optout/",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "clustrmaps",
+    "name": "Clustrmaps",
+    "category": "data_broker",
+    "opt_out_url": "https://clustrmaps.com/bl/opt-out",
+    "submission_method": "post",
+    "form_fields": {
+      "full_name": "{full_name}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "criminalwatchdog",
+    "name": "CriminalWatchdog",
+    "category": "data_broker",
+    "opt_out_url": "https://www.criminalwatchdog.com/faq/opt-out",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.criminalwatchdog.com and search for your name.\n2. Open your listing and copy the URL.\n3. Send an email to optout@criminalwatchdog.com with subject 'Opt-Out Request'.\n4. Include the listing URL, your full name, and the reason for removal.\n5. Expect a confirmation within 3-5 business days."
+  },
+  {
+    "id": "cyberbackgroundchecks",
+    "name": "CyberBackgroundChecks",
+    "category": "data_broker",
+    "opt_out_url": "https://www.cyberbackgroundchecks.com/removal",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "familytreenow",
+    "name": "FamilyTreeNow",
+    "category": "data_broker",
+    "opt_out_url": "https://www.familytreenow.com/optout",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "birthYear": "{dob}",
+      "state": "{state}"
+    },
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "golookup",
+    "name": "GoLookup",
+    "category": "data_broker",
+    "opt_out_url": "https://golookup.com/removal-policy",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Visit https://golookup.com and search for your record.\n2. Copy the URL of your listing.\n3. Send a removal request email to support@golookup.com.\n4. Include your full name, listing URL, and state in the email.\n5. Processing typically takes 3-7 business days."
+  },
+  {
+    "id": "infotracer",
+    "name": "InfoTracer",
+    "category": "data_broker",
+    "opt_out_url": "https://infotracer.com/optout/",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "nuwber",
+    "name": "Nuwber",
+    "category": "data_broker",
+    "opt_out_url": "https://nuwber.com/removal/link",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "officialusa",
+    "name": "OfficialUSA",
+    "category": "data_broker",
+    "opt_out_url": "https://www.officialusa.com/optout/",
+    "submission_method": "post",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "email": "{primary_email}",
+      "state": "{state}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "peekyou",
+    "name": "PeekYou",
+    "category": "data_broker",
+    "opt_out_url": "https://www.peekyou.com/about/contact/optout/",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "searchpeoplesearch",
+    "name": "SearchPeopleSearch",
+    "category": "data_broker",
+    "opt_out_url": "https://www.searchpeoplesearch.com/optout",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "smartbackgroundchecks",
+    "name": "SmartBackgroundChecks",
+    "category": "data_broker",
+    "opt_out_url": "https://www.smartbackgroundchecks.com/optout",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "thatsthem",
+    "name": "ThatsThem",
+    "category": "data_broker",
+    "opt_out_url": "https://thatsthem.com/optout",
+    "submission_method": "post",
+    "form_fields": {
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "usphonebook",
+    "name": "USPhoneBook",
+    "category": "data_broker",
+    "opt_out_url": "https://www.usphonebook.com/opt-out",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "phone": "{phone}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "veromi",
+    "name": "Veromi",
+    "category": "data_broker",
+    "opt_out_url": "https://www.veromi.net/privacy.aspx",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Go to https://www.veromi.net and search for your listing.\n2. Copy the URL of your profile page.\n3. Email optout@veromi.net with subject 'Privacy Opt-Out Request'.\n4. In the body, include your full name, address, and a link to your listing.\n5. Allow up to 14 business days for the removal to take effect."
+  },
+  {
+    "id": "voterrecords",
+    "name": "VoterRecords",
+    "category": "data_broker",
+    "opt_out_url": "https://voterrecords.com/faq",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Visit https://voterrecords.com and search for your name.\n2. Open your listing and note the record URL.\n3. Email contact@voterrecords.com with subject 'Opt-Out Request'.\n4. Include your full name, state, and the URL of your record.\n5. Opt-out processing may take up to 7 business days."
+  },
+  {
+    "id": "xlek",
+    "name": "Xlek",
+    "category": "data_broker",
+    "opt_out_url": "https://xlek.com/optout.php",
+    "submission_method": "post",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "email": "{primary_email}",
+      "state": "{state}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "arrestfacts",
+    "name": "ArrestFacts",
+    "category": "data_broker",
+    "opt_out_url": "https://arrestfacts.com/ng/control/optout",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "findpeoplesearch",
+    "name": "FindPeopleSearch",
+    "category": "data_broker",
+    "opt_out_url": "https://www.findpeoplesearch.com/optout",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "state": "{state}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  },
+  {
+    "id": "blockshopper",
+    "name": "BlockShopper",
+    "category": "data_broker",
+    "opt_out_url": "https://blockshopper.com/about/contact",
+    "submission_method": "manual",
+    "form_fields": {},
+    "requires_email_verification": false,
+    "requires_id_verification": false,
+    "manual_instructions": "1. Visit https://blockshopper.com and search for your property or name.\n2. Locate your listing and copy the URL.\n3. Use the contact form at https://blockshopper.com/about/contact to submit a removal request.\n4. In the message field, include your full name, the listing URL, and 'Opt-Out Request' in the subject.\n5. Removal is typically completed within 5-10 business days."
+  },
+  {
+    "id": "dobsearch",
+    "name": "DOBSearch",
+    "category": "data_broker",
+    "opt_out_url": "https://www.dobsearch.com/people-finder/pf_optout.php",
+    "submission_method": "playwright",
+    "form_fields": {
+      "firstName": "{first_name}",
+      "lastName": "{last_name}",
+      "dob": "{dob}",
+      "email": "{primary_email}"
+    },
+    "requires_email_verification": true,
+    "requires_id_verification": false,
+    "manual_instructions": null
+  }
+]
