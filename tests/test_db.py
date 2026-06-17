@@ -275,6 +275,61 @@ def test_update_finding_status_sets_screenshot_path(tmp_path):
     assert rows[0]["screenshot_path"] == "/home/user/.privguard/screenshots/spokeo_alice.png"
 
 
+def test_update_finding_status_does_not_downgrade_from_submitted(tmp_path):
+    db = tmp_path / "test.db"
+    init_db(db_path=db)
+    upsert_finding(
+        user_display_name="Alice",
+        source="data_broker",
+        site_id="spokeo",
+        site_name="Spokeo",
+        status="submitted",
+        db_path=db,
+    )
+    rows = _finding_rows(db)
+    finding_id = rows[0]["id"]
+    update_finding_status(finding_id=finding_id, status="found", db_path=db)
+    rows = _finding_rows(db)
+    assert rows[0]["status"] == "submitted", "update_finding_status must not downgrade from 'submitted'"
+
+
+def test_update_finding_status_does_not_downgrade_from_cleared(tmp_path):
+    db = tmp_path / "test.db"
+    init_db(db_path=db)
+    upsert_finding(
+        user_display_name="Alice",
+        source="data_broker",
+        site_id="spokeo",
+        site_name="Spokeo",
+        status="cleared",
+        db_path=db,
+    )
+    rows = _finding_rows(db)
+    finding_id = rows[0]["id"]
+    update_finding_status(finding_id=finding_id, status="found", db_path=db)
+    rows = _finding_rows(db)
+    assert rows[0]["status"] == "cleared", "update_finding_status must not downgrade from 'cleared'"
+
+
+def test_update_finding_status_allows_forward_progression(tmp_path):
+    """submitted -> cleared should be allowed (forward progression)."""
+    db = tmp_path / "test.db"
+    init_db(db_path=db)
+    upsert_finding(
+        user_display_name="Alice",
+        source="data_broker",
+        site_id="spokeo",
+        site_name="Spokeo",
+        status="submitted",
+        db_path=db,
+    )
+    rows = _finding_rows(db)
+    finding_id = rows[0]["id"]
+    update_finding_status(finding_id=finding_id, status="cleared", db_path=db)
+    rows = _finding_rows(db)
+    assert rows[0]["status"] == "cleared", "forward progression submitted->cleared must be allowed"
+
+
 # ---------------------------------------------------------------------------
 # upsert_breach — insert
 # ---------------------------------------------------------------------------

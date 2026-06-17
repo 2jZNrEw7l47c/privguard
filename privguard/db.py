@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS findings (
     screenshot_path TEXT,
     last_checked DATETIME,
     last_submitted DATETIME,
-    notes TEXT
+    notes TEXT,
+    UNIQUE(user_display_name, site_id)
 );
 
 CREATE TABLE IF NOT EXISTS breaches (
@@ -35,7 +36,8 @@ CREATE TABLE IF NOT EXISTS breaches (
     breach_date TEXT,
     exposed_fields TEXT,
     hibp_url TEXT,
-    added_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_display_name, email, breach_name)
 );
 """
 
@@ -52,9 +54,11 @@ def _connect(db_path: Path) -> sqlite3.Connection:
 def init_db(db_path: Path = DB_PATH) -> None:
     """Create tables if they do not already exist."""
     conn = _connect(db_path)
-    conn.executescript(_DDL)
-    conn.commit()
-    conn.close()
+    try:
+        conn.executescript(_DDL)
+        conn.commit()
+    finally:
+        conn.close()
 
 
 def upsert_finding(
@@ -154,7 +158,10 @@ def update_finding_status(
     screenshot_path: str | None = None,
     db_path: Path = DB_PATH,
 ) -> None:
-    """Update the status (and optionally screenshot_path) of a finding by id."""
+    """Update the status (and optionally screenshot_path) of a finding by id.
+
+    Will not downgrade a finding that is already in a protected status.
+    """
     now = datetime.now(timezone.utc).isoformat()
     conn = _connect(db_path)
     try:
@@ -165,8 +172,10 @@ def update_finding_status(
                 screenshot_path = COALESCE(?, screenshot_path),
                 last_submitted = CASE WHEN ? = 'submitted' THEN ? ELSE last_submitted END
             WHERE id = ?
+              AND (status NOT IN ('submitted', 'pending_verification', 'cleared')
+                   OR ? IN ('submitted', 'pending_verification', 'cleared'))
             """,
-            (status, screenshot_path, status, now, finding_id),
+            (status, screenshot_path, status, now, finding_id, status),
         )
         conn.commit()
     finally:
@@ -185,23 +194,15 @@ def upsert_breach(
     """Insert a breach record; skip silently if the same breach already exists."""
     conn = _connect(db_path)
     try:
-        existing = conn.execute(
+        conn.execute(
             """
-            SELECT id FROM breaches
-            WHERE user_display_name = ? AND email = ? AND breach_name = ?
+            INSERT OR IGNORE INTO breaches
+                (user_display_name, email, breach_name, breach_date, exposed_fields, hibp_url)
+            VALUES (?, ?, ?, ?, ?, ?)
             """,
-            (user_display_name, email, breach_name),
-        ).fetchone()
-        if existing is None:
-            conn.execute(
-                """
-                INSERT INTO breaches
-                    (user_display_name, email, breach_name, breach_date, exposed_fields, hibp_url)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (user_display_name, email, breach_name, breach_date, exposed_fields, hibp_url),
-            )
-            conn.commit()
+            (user_display_name, email, breach_name, breach_date, exposed_fields, hibp_url),
+        )
+        conn.commit()
     finally:
         conn.close()
 
