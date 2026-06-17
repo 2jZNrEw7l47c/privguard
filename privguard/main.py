@@ -19,8 +19,8 @@ def _prompt_password(prompt: str = "Master password") -> str:
 def _load_vault_or_exit(password: str) -> dict:
     try:
         return load_vault(password, VAULT_PATH)
-    except ValueError:
-        raise click.ClickException("Wrong master password.")
+    except ValueError as exc:
+        raise click.ClickException(str(exc))
     except FileNotFoundError:
         raise click.ClickException("No vault found. Run 'privguard init' first.")
 
@@ -187,6 +187,8 @@ def scan(user_name: str | None, source: str | None, force: bool) -> None:
     password = _prompt_password()
     vault = _load_vault_or_exit(password)
     users = _filter_users(vault.get("users", []), user_name)
+    if not users:
+        raise click.ClickException("No profiles found. Run 'privguard user add' first.")
     api_keys = vault.get("api_keys", {})
 
     for profile in users:
@@ -204,6 +206,8 @@ def submit(user_name: str | None, force: bool) -> None:
     password = _prompt_password()
     vault = _load_vault_or_exit(password)
     users = _filter_users(vault.get("users", []), user_name)
+    if not users:
+        raise click.ClickException("No profiles found. Run 'privguard user add' first.")
 
     for profile in users:
         click.echo(f"Submitting removals for: {profile['display_name']}")
@@ -220,6 +224,8 @@ def report(user_name: str | None, output_dir: str | None) -> None:
     password = _prompt_password()
     vault = _load_vault_or_exit(password)
     users = _filter_users(vault.get("users", []), user_name)
+    if not users:
+        raise click.ClickException("No profiles found. Run 'privguard user add' first.")
 
     resolved_output = Path(output_dir) if output_dir else Path.cwd()
 

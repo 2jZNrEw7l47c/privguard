@@ -267,7 +267,7 @@ class TestUserList:
             result = runner.invoke(cli, ["user", "list"], input="secret\n")
 
         assert result.exit_code == 0, result.output
-        assert "no profiles" in result.output.lower() or result.output.strip() != ""
+        assert "no profiles" in result.output.lower()
 
 
 class TestUserRemove:
@@ -345,7 +345,7 @@ class TestScan:
 
         assert result.exit_code == 0, result.output
         _, kwargs = mock_scan.call_args
-        assert kwargs.get("source") == "brokers" or mock_scan.call_args[0][2] == "brokers"
+        assert kwargs.get("source") == "brokers"
 
     def test_scan_force_flag_passes_force_true_to_scan_user(self, tmp_path):
         result, mock_scan = self._invoke_scan(tmp_path, ONE_USER_VAULT, args=["--force"])
@@ -364,6 +364,11 @@ class TestScan:
         result, _ = self._invoke_scan(tmp_path, ONE_USER_VAULT)
 
         assert "Scan complete" in result.output
+
+    def test_scan_empty_vault_prints_error(self, tmp_path):
+        result, mock_scan = self._invoke_scan(tmp_path, EMPTY_VAULT)
+        assert result.exit_code != 0 or "no profiles" in result.output.lower()
+        mock_scan.assert_not_called()
 
 
 class TestSubmit:
