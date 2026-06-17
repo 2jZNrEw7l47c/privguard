@@ -77,7 +77,7 @@ You should see:
 ```
 Usage: privguard [OPTIONS] COMMAND [ARGS]...
 
-  PrivGuard — personal data exposure tracker and opt-out tool.
+  PrivGuard — personal PII protection tool.
 
 Options:
   --help  Show this message and exit.
@@ -287,11 +287,7 @@ Have I Been Pwned (HIBP) is a free service that tells you whether your email add
 1. Go to [https://haveibeenpwned.com/API/Key](https://haveibeenpwned.com/API/Key)
 2. Enter your email address and complete the payment form
 3. You will receive your API key by email within a few minutes
-4. Add it to PrivGuard:
-
-```bash
-privguard config set hibp-api-key YOUR_KEY_HERE
-```
+4. When you run `privguard user add`, you will be prompted to enter your HIBP API key — paste it there.
 
 PrivGuard stores the key in your encrypted vault — it is never written to a plain-text file.
 

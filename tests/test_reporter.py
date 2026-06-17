@@ -14,7 +14,7 @@ from privguard.reporter import generate_report
 def _insert_finding(conn, **kwargs):
     defaults = dict(
         user_display_name="John Smith",
-        source="broker",
+        source="brokers",
         site_id="testsite",
         site_name="Test Site",
         data_found=None,
@@ -156,7 +156,7 @@ class TestDataBrokersSheet:
         import openpyxl
 
         conn, db_file = db
-        _insert_finding(conn, source="broker")
+        _insert_finding(conn, source="brokers")
         conn.commit()
 
         out = generate_report(_profile(), tmp_path, db_path=db_file)
@@ -178,7 +178,7 @@ class TestDataBrokersSheet:
         import openpyxl
 
         conn, db_file = db
-        _insert_finding(conn, source="broker", status="found")
+        _insert_finding(conn, source="brokers", status="found")
         conn.commit()
 
         out = generate_report(_profile(), tmp_path, db_path=db_file)
@@ -192,7 +192,7 @@ class TestDataBrokersSheet:
         import openpyxl
 
         conn, db_file = db
-        _insert_finding(conn, source="broker", status="submitted")
+        _insert_finding(conn, source="brokers", status="submitted")
         conn.commit()
 
         out = generate_report(_profile(), tmp_path, db_path=db_file)
@@ -206,7 +206,7 @@ class TestDataBrokersSheet:
         import openpyxl
 
         conn, db_file = db
-        _insert_finding(conn, source="broker", status="manual_required")
+        _insert_finding(conn, source="brokers", status="manual_required")
         conn.commit()
 
         out = generate_report(_profile(), tmp_path, db_path=db_file)
@@ -220,7 +220,7 @@ class TestDataBrokersSheet:
         import openpyxl
 
         conn, db_file = db
-        _insert_finding(conn, source="broker", status="pending_verification")
+        _insert_finding(conn, source="brokers", status="pending_verification")
         conn.commit()
 
         out = generate_report(_profile(), tmp_path, db_path=db_file)
@@ -234,7 +234,7 @@ class TestDataBrokersSheet:
         import openpyxl
 
         conn, db_file = db
-        _insert_finding(conn, source="broker", status="not_found")
+        _insert_finding(conn, source="brokers", status="not_found")
         conn.commit()
 
         out = generate_report(_profile(), tmp_path, db_path=db_file)
@@ -248,7 +248,7 @@ class TestDataBrokersSheet:
         import openpyxl
 
         conn, db_file = db
-        _insert_finding(conn, source="broker", site_name="BrokerSite")
+        _insert_finding(conn, source="brokers", site_name="BrokerSite")
         _insert_finding(conn, source="social", site_name="SocialSite", site_id="social1")
         conn.commit()
 
@@ -509,7 +509,7 @@ class TestSocialPlatformsSheet:
 
         conn, db_file = db
         _insert_finding(conn, source="social", site_name="Facebook", site_id="facebook1")
-        _insert_finding(conn, source="broker", site_name="Whitepages", site_id="whitepages1")
+        _insert_finding(conn, source="brokers", site_name="Whitepages", site_id="whitepages1")
         conn.commit()
 
         out = generate_report(_profile(), tmp_path, db_path=db_file)
@@ -544,8 +544,8 @@ class TestSearchEngineRemovalsSheet:
         import openpyxl
 
         conn, db_file = db
-        _insert_finding(conn, source="search_engine", site_name="Google", site_id="google1")
-        _insert_finding(conn, source="broker", site_name="Whitepages", site_id="whitepages1")
+        _insert_finding(conn, source="search_engines", site_name="Google", site_id="google1")
+        _insert_finding(conn, source="brokers", site_name="Whitepages", site_id="whitepages1")
         conn.commit()
 
         out = generate_report(_profile(), tmp_path, db_path=db_file)

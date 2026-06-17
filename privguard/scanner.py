@@ -149,7 +149,7 @@ def _scan_hibp(
                     email=email,
                     breach_name=breach["Name"],
                     breach_date=breach.get("BreachDate", ""),
-                    exposed_fields=", ".join(breach.get("DataClasses", [])),
+                    exposed_fields=json.dumps(breach.get("DataClasses", [])),
                     hibp_url=f"https://haveibeenpwned.com/account/{email}",
                     db_path=db_path,
                 )
@@ -174,6 +174,10 @@ def _scan_social(
         for f in get_findings(user_display_name=display_name, db_path=db_path)
         if f.get("source") == "social"
     }
+
+    if sync_playwright is None:
+        print("Warning: Playwright is not installed. Social scan skipped. Run: playwright install chromium")
+        return
 
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True)

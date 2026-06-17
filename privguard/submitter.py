@@ -142,6 +142,9 @@ def _submit_playwright(
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
     screenshot_path = SCREENSHOTS_DIR / f"{broker['id']}_{safe_username}_{timestamp}.png"
 
+    if sync_playwright is None:
+        return
+
     try:
         SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
         with sync_playwright() as pw:

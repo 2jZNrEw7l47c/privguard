@@ -104,7 +104,7 @@ def _build_data_brokers(ws, findings: list[dict]) -> None:
         ws.cell(row=1, column=col, value=header)
     _style_header_row(ws, num_cols=len(headers))
 
-    broker_findings = [f for f in findings if f["source"] == "broker"]
+    broker_findings = [f for f in findings if f["source"] == "brokers"]
     for row_idx, finding in enumerate(broker_findings, start=2):
         ws.cell(row=row_idx, column=1, value=finding["site_name"])
         status_cell = ws.cell(row=row_idx, column=2, value=finding["status"])
@@ -196,7 +196,7 @@ def _build_search_engine_removals(ws, findings: list[dict]) -> None:
         ws.cell(row=1, column=col, value=header)
     _style_header_row(ws, num_cols=len(headers))
 
-    se_findings = [f for f in findings if f["source"] == "search_engine"]
+    se_findings = [f for f in findings if f["source"] == "search_engines"]
     for row_idx, finding in enumerate(se_findings, start=2):
         ws.cell(row=row_idx, column=1, value=finding["site_name"])
         ws.cell(row=row_idx, column=2, value=finding["status"])
