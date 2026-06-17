@@ -330,6 +330,24 @@ def test_update_finding_status_allows_forward_progression(tmp_path):
     assert rows[0]["status"] == "cleared", "forward progression submitted->cleared must be allowed"
 
 
+def test_update_finding_status_does_not_downgrade_from_pending_verification(tmp_path):
+    db = tmp_path / "test.db"
+    init_db(db_path=db)
+    upsert_finding(
+        user_display_name="Alice",
+        source="data_broker",
+        site_id="spokeo",
+        site_name="Spokeo",
+        status="pending_verification",
+        db_path=db,
+    )
+    rows = _finding_rows(db)
+    finding_id = rows[0]["id"]
+    update_finding_status(finding_id=finding_id, status="found", db_path=db)
+    rows = _finding_rows(db)
+    assert rows[0]["status"] == "pending_verification", "update_finding_status must not downgrade from 'pending_verification'"
+
+
 # ---------------------------------------------------------------------------
 # upsert_breach — insert
 # ---------------------------------------------------------------------------
