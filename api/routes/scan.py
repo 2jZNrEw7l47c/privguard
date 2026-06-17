@@ -48,6 +48,9 @@ def _run_scan_in_background(job_id: str, profile: dict, api_keys: dict,
         scan_user(profile, api_keys=api_keys, source=source,
                   force=force, db_path=db_path,
                   progress_cb=lambda e: q.put(e) if q else None)
+    except Exception as exc:
+        if q:
+            q.put({"type": "error", "message": str(exc)})
     finally:
         mark_done(job_id)
 

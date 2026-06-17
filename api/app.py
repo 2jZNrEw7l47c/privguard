@@ -15,6 +15,7 @@ from api.auth import create_session, destroy_session
 from api.routes.findings import router as findings_router
 from api.routes.scan import router as scan_router
 from api.routes.users import router as users_router
+from privguard.db import init_db
 from privguard.vault import VAULT_PATH, load_vault, save_vault
 
 app = FastAPI(title="PrivGuard API", docs_url="/api/docs")
@@ -82,6 +83,11 @@ def lock(response: Response, session: Optional[str] = Cookie(default=None)):
 
 
 @app.on_event("startup")
+async def _startup() -> None:
+    init_db()
+    await _load_breach_catalogue()
+
+
 async def _load_breach_catalogue() -> None:
     try:
         resp = http_requests.get(
