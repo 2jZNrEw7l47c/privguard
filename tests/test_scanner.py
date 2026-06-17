@@ -136,6 +136,17 @@ class TestScanBrokers:
                 scanner._scan_brokers(SAMPLE_PROFILE, SAMPLE_BROKERS[:1], force=True, db_path=db)
         mock_head.assert_called_once()
 
+    def test_marks_not_found_when_head_returns_404(self, tmp_path):
+        db = tmp_path / "test.db"
+        init_db(db)
+        mock_response = MagicMock()
+        mock_response.status_code = 404
+        with patch("privguard.scanner.requests.head", return_value=mock_response):
+            with patch("privguard.scanner.time.sleep"):
+                scanner._scan_brokers(SAMPLE_PROFILE, SAMPLE_BROKERS[:1], force=False, db_path=db)
+        findings = get_findings(user_display_name="John Smith", db_path=db)
+        assert findings[0]["status"] == "not_found"
+
 
 class TestScanHibp:
     def test_saves_breach_when_hibp_returns_200(self, tmp_path):
@@ -194,6 +205,17 @@ class TestScanHibp:
                 )
         assert mock_get.call_count == 2
         mock_sleep.assert_any_call(6)
+
+    def test_prints_warning_when_hibp_returns_401(self, tmp_path, capsys):
+        db = tmp_path / "test.db"
+        init_db(db)
+        mock_response = MagicMock()
+        mock_response.status_code = 401
+        with patch("privguard.scanner.requests.get", return_value=mock_response):
+            with patch("privguard.scanner.time.sleep"):
+                scanner._scan_hibp(SAMPLE_PROFILE, api_key="bad-key", force=False, db_path=db)
+        captured = capsys.readouterr()
+        assert "401" in captured.out or "invalid" in captured.out.lower()
 
 
 class TestScanSocial:
@@ -298,6 +320,18 @@ class TestScanSearchEngines:
         findings = get_findings(user_display_name="John Smith", db_path=db)
         se_findings = [f for f in findings if f["source"] == "search_engines"]
         assert len(se_findings) == 2
+
+
+class TestLoadBrokers:
+    def test_raises_friendly_error_when_brokers_json_missing(self, tmp_path):
+        with patch("privguard.scanner.BROKERS_PATH", tmp_path / "nonexistent.json"):
+            with pytest.raises(FileNotFoundError, match="Broker list not found"):
+                scanner.load_brokers()
+
+    def test_loads_all_44_brokers_from_real_file(self):
+        brokers = scanner.load_brokers()
+        assert len(brokers) == 44
+        assert all("id" in b and "opt_out_url" in b for b in brokers)
 
 
 class TestScanUser:

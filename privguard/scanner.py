@@ -45,6 +45,11 @@ _SOCIAL_SITES = [
 
 
 def load_brokers() -> list[dict]:
+    if not BROKERS_PATH.exists():
+        raise FileNotFoundError(
+            f"Broker list not found at {BROKERS_PATH}. "
+            "Ensure data/brokers.json is present in the project directory."
+        )
     with open(BROKERS_PATH, "r", encoding="utf-8") as fh:
         return json.load(fh)
 
@@ -90,7 +95,7 @@ def _scan_brokers(
         url = broker.get("opt_out_url", "")
         try:
             resp = requests.head(url, timeout=10, allow_redirects=True)
-            status = "found" if resp.status_code < 500 else "not_found"
+            status = "found" if resp.status_code == 200 else "not_found"
         except Exception:
             status = "not_found"
 
@@ -133,6 +138,10 @@ def _scan_hibp(
             time.sleep(6)
             resp = requests.get(url, headers=headers, timeout=15)
 
+        if resp.status_code == 401:
+            print("[PrivGuard] HIBP API key is invalid (401). Check your API key.")
+            return
+
         if resp.status_code == 200:
             for breach in resp.json():
                 upsert_breach(
@@ -168,41 +177,42 @@ def _scan_social(
 
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True)
-        page = browser.new_page()
+        try:
+            page = browser.new_page()
 
-        for site in _SOCIAL_SITES:
-            site_id = site["id"]
-            if not force and existing.get(site_id) in _SKIP_STATUSES:
-                continue
+            for site in _SOCIAL_SITES:
+                site_id = site["id"]
+                if not force and existing.get(site_id) in _SKIP_STATUSES:
+                    continue
 
-            url = (
-                site["search_url"]
-                .replace("{name_slug}", name_slug)
-                .replace("{first}", first)
-                .replace("{last}", last)
-                .replace("{full_name}", requests.utils.quote(full_name))
-            )
+                url = (
+                    site["search_url"]
+                    .replace("{name_slug}", name_slug)
+                    .replace("{first}", first)
+                    .replace("{last}", last)
+                    .replace("{full_name}", requests.utils.quote(full_name))
+                )
 
-            try:
-                page.goto(url, timeout=15000)
-                content = page.content()
-                status = "found" if full_name.lower() in content.lower() else "not_found"
-            except Exception:
-                status = "not_found"
+                try:
+                    page.goto(url, timeout=15000)
+                    content = page.content()
+                    status = "found" if full_name.lower() in content.lower() else "not_found"
+                except Exception:
+                    status = "not_found"
 
-            upsert_finding(
-                user_display_name=display_name,
-                source="social",
-                site_id=site_id,
-                site_name=site["name"],
-                status=status,
-                opt_out_url=url,
-                db_path=db_path,
-            )
+                upsert_finding(
+                    user_display_name=display_name,
+                    source="social",
+                    site_id=site_id,
+                    site_name=site["name"],
+                    status=status,
+                    opt_out_url=url,
+                    db_path=db_path,
+                )
 
-            time.sleep(random.uniform(2.0, 4.0))
-
-        browser.close()
+                time.sleep(random.uniform(2.0, 4.0))
+        finally:
+            browser.close()
 
 
 def _scan_search_engines(
