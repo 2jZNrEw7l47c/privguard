@@ -1,5 +1,7 @@
 # PrivGuard
 
+**v1.0.0 — CLI edition** · [Changelog](CHANGELOG.md)
+
 **Take back control of your personal information.**
 
 PrivGuard is a command-line tool that automatically searches data broker websites, people-search engines, social platforms, and known data breach databases to find where your personal information is exposed. When it finds your data on a broker site, it can auto-submit opt-out / removal requests on your behalf using a real browser. After scanning, it generates a clear Excel report showing every exposure, what was found, and what actions were taken — all stored locally on your computer with no cloud accounts required.
