@@ -41,6 +41,31 @@ _SOCIAL_SITES = [
         "name": "X (Twitter)",
         "search_url": "https://twitter.com/search?q={full_name}&f=user",
     },
+    {
+        "id": "instagram",
+        "name": "Instagram",
+        "search_url": "https://www.instagram.com/{name_slug}/",
+    },
+    {
+        "id": "tiktok",
+        "name": "TikTok",
+        "search_url": "https://www.tiktok.com/@{name_slug}",
+    },
+    {
+        "id": "reddit",
+        "name": "Reddit",
+        "search_url": "https://www.reddit.com/search/?q={full_name}&type=user",
+    },
+    {
+        "id": "youtube",
+        "name": "YouTube",
+        "search_url": "https://www.youtube.com/results?search_query={full_name}",
+    },
+    {
+        "id": "pinterest",
+        "name": "Pinterest",
+        "search_url": "https://www.pinterest.com/search/users/?q={full_name}",
+    },
 ]
 
 
@@ -60,17 +85,20 @@ def scan_user(
     source: Optional[str] = None,
     force: bool = False,
     db_path: Path = DB_PATH,
+    progress_cb=None,
 ) -> None:
     brokers = load_brokers()
 
     if source is None or source == "brokers":
-        _scan_brokers(profile, brokers, force=force, db_path=db_path)
+        _scan_brokers(profile, brokers, force=force, db_path=db_path, progress_cb=progress_cb)
     if source is None or source == "hibp":
         _scan_hibp(profile, api_key=api_keys.get("hibp"), force=force, db_path=db_path)
     if source is None or source == "social":
         _scan_social(profile, force=force, db_path=db_path)
     if source is None or source == "search_engines":
         _scan_search_engines(profile, force=force, db_path=db_path)
+    if source is None or source == "ad_networks":
+        _scan_ad_networks(profile, force=force, db_path=db_path)
 
 
 def _scan_brokers(
@@ -78,6 +106,7 @@ def _scan_brokers(
     brokers: list[dict],
     force: bool,
     db_path: Path,
+    progress_cb=None,
 ) -> None:
     display_name = profile["display_name"]
 
@@ -87,9 +116,14 @@ def _scan_brokers(
         if f.get("source") == "brokers"
     }
 
-    for broker in brokers:
+    total = len(brokers)
+    for count, broker in enumerate(brokers, start=1):
         site_id = broker["id"]
         if not force and existing.get(site_id) in _SKIP_STATUSES:
+            if progress_cb:
+                progress_cb({"type": "progress", "source": "brokers",
+                             "site": broker["name"], "status": "skipped",
+                             "count": count, "total": total})
             continue
 
         url = broker.get("opt_out_url", "")
@@ -109,6 +143,11 @@ def _scan_brokers(
             manual_instructions=broker.get("manual_instructions"),
             db_path=db_path,
         )
+
+        if progress_cb:
+            progress_cb({"type": "progress", "source": "brokers",
+                         "site": broker["name"], "status": status,
+                         "count": count, "total": total})
 
         time.sleep(random.uniform(0.5, 1.5))
 
@@ -267,6 +306,85 @@ def _scan_search_engines(
         upsert_finding(
             user_display_name=display_name,
             source="search_engines",
+            site_id=site["id"],
+            site_name=site["name"],
+            status="manual_required",
+            opt_out_url=site["opt_out_url"],
+            manual_instructions=site["instructions"],
+            db_path=db_path,
+        )
+
+
+_AD_NETWORK_SITES = [
+    {
+        "id": "nai_optout",
+        "name": "NAI (Network Advertising Initiative)",
+        "opt_out_url": "https://optout.networkadvertising.org/",
+        "instructions": (
+            "1. Go to https://optout.networkadvertising.org/\n"
+            "2. Click 'Opt Out of All' to opt out of all NAI member ad networks at once.\n"
+            "3. Note: this opt-out is cookie-based. Repeat in each browser you use.\n"
+            "4. Do not clear cookies after opting out or the opt-out will be lost."
+        ),
+    },
+    {
+        "id": "daa_optout",
+        "name": "DAA (Digital Advertising Alliance)",
+        "opt_out_url": "https://optout.aboutads.info/",
+        "instructions": (
+            "1. Go to https://optout.aboutads.info/\n"
+            "2. Wait for the page to scan your browser for participating companies.\n"
+            "3. Click 'Opt Out of All' to opt out of all DAA member ad targeting.\n"
+            "4. Note: cookie-based opt-out. Repeat in each browser you use."
+        ),
+    },
+    {
+        "id": "google_ads",
+        "name": "Google Ad Personalization",
+        "opt_out_url": "https://adssettings.google.com/",
+        "instructions": (
+            "1. Sign in to your Google account and go to https://adssettings.google.com/\n"
+            "2. Toggle 'Ad personalization' to OFF.\n"
+            "3. Also visit https://www.google.com/settings/ads/anonymous to opt out when "
+            "not signed in.\n"
+            "4. For YouTube: go to youtube.com > Settings > Privacy > turn off ad personalization."
+        ),
+    },
+    {
+        "id": "facebook_offsite",
+        "name": "Facebook Off-Facebook Activity",
+        "opt_out_url": "https://www.facebook.com/off_facebook_activity/",
+        "instructions": (
+            "1. Log in to Facebook and go to https://www.facebook.com/off_facebook_activity/\n"
+            "2. Click 'More Options' then 'Manage Future Activity'.\n"
+            "3. Toggle 'Future Off-Facebook Activity' to OFF.\n"
+            "4. Click 'Turn Off' to confirm.\n"
+            "5. Optionally click 'Clear History' to disconnect past data from your account."
+        ),
+    },
+]
+
+
+def _scan_ad_networks(
+    profile: dict,
+    force: bool,
+    db_path: Path,
+) -> None:
+    display_name = profile["display_name"]
+
+    existing: dict[str, str] = {
+        f["site_id"]: f["status"]
+        for f in get_findings(user_display_name=display_name, db_path=db_path)
+        if f.get("source") == "ad_networks"
+    }
+
+    for site in _AD_NETWORK_SITES:
+        if not force and existing.get(site["id"]) in _SKIP_STATUSES:
+            continue
+
+        upsert_finding(
+            user_display_name=display_name,
+            source="ad_networks",
             site_id=site["id"],
             site_name=site["name"],
             status="manual_required",

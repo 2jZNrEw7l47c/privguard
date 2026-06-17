@@ -263,7 +263,7 @@ class TestScanSocial:
         findings = get_findings(user_display_name="John Smith", db_path=db)
         social_findings = [f for f in findings if f["source"] == "social"]
         assert all(f["status"] == "not_found" for f in social_findings)
-        assert len(social_findings) == 3  # facebook, linkedin, twitter_x
+        assert len(social_findings) == 8  # facebook, linkedin, twitter_x, instagram, tiktok, reddit, youtube, pinterest
 
     def test_marks_not_found_when_playwright_raises(self, tmp_path):
         db = tmp_path / "test.db"
@@ -330,7 +330,7 @@ class TestLoadBrokers:
 
     def test_loads_all_44_brokers_from_real_file(self):
         brokers = scanner.load_brokers()
-        assert len(brokers) == 44
+        assert len(brokers) == 76
         assert all("id" in b and "opt_out_url" in b for b in brokers)
 
 
