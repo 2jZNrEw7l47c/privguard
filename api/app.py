@@ -9,12 +9,14 @@ from fastapi import Cookie, FastAPI, HTTPException, Response
 from pydantic import BaseModel
 
 from api.auth import create_session, destroy_session
+from api.routes.scan import router as scan_router
 from api.routes.users import router as users_router
 from privguard.vault import VAULT_PATH, load_vault
 
 app = FastAPI(title="PrivGuard API")
 
 app.include_router(users_router)
+app.include_router(scan_router)
 
 
 def _vault_path() -> Path:
