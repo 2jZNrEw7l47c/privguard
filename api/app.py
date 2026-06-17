@@ -15,7 +15,7 @@ from api.auth import create_session, destroy_session
 from api.routes.findings import router as findings_router
 from api.routes.scan import router as scan_router
 from api.routes.users import router as users_router
-from privguard.vault import VAULT_PATH, load_vault
+from privguard.vault import VAULT_PATH, load_vault, save_vault
 
 app = FastAPI(title="PrivGuard API", docs_url="/api/docs")
 
@@ -39,6 +39,25 @@ def _vault_path() -> Path:
 
 class UnlockRequest(BaseModel):
     password: str
+
+
+@app.get("/api/auth/status")
+def auth_status():
+    return {"vault_exists": _vault_path().exists()}
+
+
+@app.post("/api/auth/init")
+def init_vault(body: UnlockRequest, response: Response):
+    if _vault_path().exists():
+        raise HTTPException(status_code=409, detail="Vault already exists. Use /api/auth/unlock.")
+    if not body.password:
+        raise HTTPException(status_code=400, detail="Password must not be empty.")
+    _vault_path().parent.mkdir(parents=True, exist_ok=True)
+    save_vault(body.password, {}, _vault_path())
+    vault = load_vault(body.password, vault_path=_vault_path())
+    token = create_session(vault, body.password)
+    response.set_cookie("session", token, httponly=True, samesite="strict")
+    return {"status": "created"}
 
 
 @app.post("/api/auth/unlock")
