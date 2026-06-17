@@ -60,13 +60,15 @@ online_security/
 │   │   ├── dashboard/page.tsx              # All-profiles overview
 │   │   ├── users/[name]/page.tsx           # User detail (tabbed: brokers, breaches, social, search)
 │   │   ├── users/[name]/scan/page.tsx      # Live scan progress
-│   │   └── users/new/page.tsx              # Add profile form
+│   │   ├── users/new/page.tsx              # Add profile form
+│   │   └── tools/password-check/page.tsx  # Pwned Passwords checker (client-only, no API key)
 │   ├── components/
 │   │   ├── StatCards.tsx
 │   │   ├── FindingsTable.tsx
 │   │   ├── BreachList.tsx
 │   │   ├── ScanProgress.tsx
-│   │   └── StatusBadge.tsx
+│   │   ├── StatusBadge.tsx
+│   │   └── PasswordChecker.tsx             # client component: SHA-1 hash → HIBP range check
 │   ├── lib/
 │   │   └── api.ts                          # Typed fetch wrappers for FastAPI
 │   └── package.json
@@ -125,6 +127,46 @@ The `scan_user()` function in scanner.py gains one new branch:
 if source is None or source == "ad_networks":
     _scan_ad_networks(profile, force=force, db_path=db_path)
 ```
+
+### HIBP Free Tier Features
+
+Two HIBP features require no API key and are added at zero cost.
+
+**1. Pwned Passwords checker**
+
+Uses the [k-anonymity range API](https://haveibeenpwned.com/API/v3#PwnedPasswords): `GET https://api.pwnedpasswords.com/range/{first5}`. The full password is never sent anywhere — the browser hashes it with SHA-1, sends only the first 5 hex characters, and checks whether the remaining suffix appears in the response list.
+
+This is implemented entirely in the browser (Next.js client component) — no FastAPI route needed, no backend changes. The flow:
+
+```
+User types password in browser
+  → browser: SHA1(password) = "5BAA61E4C9B93F3F0682250B6CF8331B7EE68FD8"
+  → browser fetch: GET https://api.pwnedpasswords.com/range/5BAA6
+  → HIBP returns list of suffix:count pairs
+  → browser checks if "1E4C9B93F3F0682250B6CF8331B7EE68FD8" is in list
+  → shows: "⚠ Found in 3,861,493 breaches — change this password"
+     or:   "✓ Not found in any known breach"
+```
+
+New page: `/tools/password-check` — text input, check button, result shown inline. Users can check multiple passwords in sequence; nothing is stored. A short explanation of k-anonymity ("your password never leaves your browser") is shown below the input.
+
+**2. Public breach metadata enrichment**
+
+`GET https://haveibeenpwned.com/api/v3/breaches` (no auth) returns the full list of all known breaches with metadata: logo URL, description, domain, pwn count, data classes. No personal data involved — this is a public catalogue.
+
+Called once at dashboard load and cached in memory. Used to enrich the Breaches (HIBP) tab: each breach row gains the service's logo/favicon and a short description pulled from the public catalogue. No API key required.
+
+This is a FastAPI-level cache (fetched server-side on startup, refreshed daily):
+
+```python
+# api/app.py — on startup
+@app.on_event("startup")
+async def _load_breach_catalogue():
+    resp = requests.get("https://haveibeenpwned.com/api/v3/breaches", timeout=10)
+    app.state.breach_catalogue = {b["Name"]: b for b in resp.json()}
+```
+
+The `/api/users/{name}/breaches` endpoint merges catalogue metadata into each breach record before returning it to the frontend.
 
 ---
 
@@ -207,6 +249,14 @@ Session lifetime: until server restart or `POST /api/auth/lock`. The password is
 - Form fields matching the vault schema: display name, full name, DOB, emails (multi-entry), phones (multi-entry), address, HIBP API key
 - POSTs to `/api/users`
 - On success redirects to `/dashboard`
+
+**Password Checker (`/tools/password-check`)**
+- Single password input field (masked), "Check Password" button
+- Entirely client-side — no network call to FastAPI, no data stored
+- On submit: hashes input with SHA-1 via Web Crypto API, fetches `https://api.pwnedpasswords.com/range/{first5}`, checks response for matching suffix
+- Shows result: breach count if found (red warning), or "not found in any known breach" (green)
+- Brief explainer under the input: "Your password is hashed locally and never sent anywhere. Only the first 5 characters of the hash are transmitted."
+- Linked from the sidebar under a "Tools" section
 
 ### Status Colours
 
