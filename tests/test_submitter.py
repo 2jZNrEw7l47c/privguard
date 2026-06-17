@@ -428,6 +428,18 @@ class TestSubmitRemovals:
 
         mock_post.assert_not_called()
 
+    def test_skips_cleared_by_default(self, tmp_path):
+        db = tmp_path / "test.db"
+        init_db(db)
+        _seed_finding(db, SAMPLE_BROKER_POST, status="cleared")
+
+        with patch("privguard.submitter.load_brokers", return_value=[SAMPLE_BROKER_POST]):
+            with patch("privguard.submitter._submit_post") as mock_post:
+                with patch("privguard.submitter.time.sleep"):
+                    submitter.submit_removals(SAMPLE_PROFILE, force=False, db_path=db)
+
+        mock_post.assert_not_called()
+
     def test_processes_skipped_statuses_when_force_is_true(self, tmp_path):
         db = tmp_path / "test.db"
         init_db(db)

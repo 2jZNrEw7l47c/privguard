@@ -137,13 +137,13 @@ def _submit_playwright(
 ) -> None:
     url = broker.get("opt_out_url", "")
     form_data = _build_form_data(broker, profile)
-    SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
 
     safe_username = re.sub(r"[^\w]", "_", finding.get("user_display_name", "user"))
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
     screenshot_path = SCREENSHOTS_DIR / f"{broker['id']}_{safe_username}_{timestamp}.png"
 
     try:
+        SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
         with sync_playwright() as pw:
             browser = pw.chromium.launch(headless=True)
             page = browser.new_page()
