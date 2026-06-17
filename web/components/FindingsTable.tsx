@@ -54,7 +54,7 @@ export function FindingsTable({ findings, filter, onStatusChange }: Props) {
               <th className="px-4 py-3 font-medium">Site</th>
               <th className="px-4 py-3 font-medium">Source</th>
               <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium">Opt-Out</th>
+              <th className="px-4 py-3 font-medium">Links</th>
               <th className="px-4 py-3 font-medium">Last Checked</th>
               <th className="px-4 py-3 font-medium">Actions</th>
             </tr>
@@ -72,18 +72,34 @@ export function FindingsTable({ findings, filter, onStatusChange }: Props) {
                   <StatusBadge status={f.status} />
                 </td>
                 <td className="px-4 py-3">
-                  {f.opt_out_url ? (
-                    <a
-                      href={f.opt_out_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent hover:text-accent-hover text-xs"
-                    >
-                      Opt-Out ↗
-                    </a>
-                  ) : (
-                    <span className="text-muted text-xs">—</span>
-                  )}
+                  <div className="flex flex-col gap-1">
+                    {f.opt_out_url && (() => {
+                      let siteRoot: string | null = null;
+                      try { siteRoot = new URL(f.opt_out_url).origin; } catch {}
+                      return siteRoot ? (
+                        <a
+                          href={siteRoot}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-400 hover:text-blue-300 text-xs"
+                        >
+                          View Site ↗
+                        </a>
+                      ) : null;
+                    })()}
+                    {f.opt_out_url ? (
+                      <a
+                        href={f.opt_out_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-accent hover:text-accent-hover text-xs"
+                      >
+                        Opt-Out ↗
+                      </a>
+                    ) : (
+                      <span className="text-muted text-xs">—</span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-muted text-xs">
                   {f.last_checked
