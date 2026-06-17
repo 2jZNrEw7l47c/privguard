@@ -5,6 +5,27 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.0.0] — 2026-06-17
+
+Replaces the CLI and Excel reports with a local web dashboard (FastAPI + Next.js).
+
+### Added
+- FastAPI backend (`api/`) wrapping all existing Python logic as REST/SSE endpoints
+- Session auth via master password → httpOnly cookie (vault decrypted in memory, never saved)
+- Live scan progress streamed to browser via Server-Sent Events
+- `privguard serve` command launches uvicorn + Next.js dev server and opens browser
+- 32 new broker entries: marketing databases (ZoomInfo, Clearbit, Apollo.io, etc.), phone lookup, address lookup, mugshot/arrest sites
+- 5 new social platforms: Instagram, TikTok, Reddit, YouTube, Pinterest
+- Ad network opt-out source (`ad_networks`): NAI, DAA, Google Ads, Facebook Off-Site Activity
+- HIBP public breach catalogue enrichment on startup (logos, descriptions — no API key required)
+- Pwned Passwords checker (client-side, k-anonymity SHA-1, no API key required)
+
+### Removed
+- `privguard/main.py` — CLI replaced by `privguard serve`
+- `privguard/reporter.py` — Excel replaced by in-browser tables
+
+---
+
 ## [1.0.0] — 2026-06-17
 
 Initial release. CLI-based tool for scanning personal data exposure and submitting opt-out requests.
