@@ -1,4 +1,5 @@
 """Tests for privguard/vault.py — encrypted PII storage."""
+import re
 from pathlib import Path
 
 import pytest
@@ -81,17 +82,52 @@ def test_wrong_password_error_message(tmp_path):
     vault_file = tmp_path / "vault.enc"
     save_vault(password="correct", vault_data=SAMPLE_VAULT, vault_path=vault_file)
 
-    with pytest.raises(ValueError, match="Invalid master password or corrupted vault."):
+    with pytest.raises(ValueError, match=re.escape("Invalid master password or corrupted vault.")):
         load_vault(password="wrong", vault_path=vault_file)
 
 
-def test_empty_password_with_wrong_load_password_raises(tmp_path):
-    """Edge case: empty string as save password, wrong string on load."""
-    vault_file = tmp_path / "vault.enc"
-    save_vault(password="", vault_data={"users": []}, vault_path=vault_file)
+# ---------------------------------------------------------------------------
+# Empty password validation
+# ---------------------------------------------------------------------------
 
-    with pytest.raises(ValueError, match="Invalid master password or corrupted vault."):
-        load_vault(password="not-empty", vault_path=vault_file)
+def test_save_vault_empty_password_raises(tmp_path):
+    """save_vault must raise ValueError when password is empty."""
+    vault_file = tmp_path / "vault.enc"
+
+    with pytest.raises(ValueError, match="Master password must not be empty"):
+        save_vault(password="", vault_data={"users": []}, vault_path=vault_file)
+
+
+def test_load_vault_empty_password_raises(tmp_path):
+    """load_vault must raise ValueError when password is empty."""
+    vault_file = tmp_path / "vault.enc"
+    save_vault(password="real-password", vault_data={"users": []}, vault_path=vault_file)
+
+    with pytest.raises(ValueError, match="Master password must not be empty"):
+        load_vault(password="", vault_path=vault_file)
+
+
+# ---------------------------------------------------------------------------
+# Truncated file detection
+# ---------------------------------------------------------------------------
+
+def test_truncated_file_raises_corruption_error(tmp_path):
+    """load_vault must raise ValueError for a file that is too short to be valid."""
+    vault_file = tmp_path / "vault.enc"
+    # Write fewer bytes than _SALT_SIZE (16) so the truncation guard fires.
+    vault_file.write_bytes(b"\x00" * 10)
+
+    with pytest.raises(ValueError, match=re.escape("Vault file is truncated or empty")):
+        load_vault(password="any-password", vault_path=vault_file)
+
+
+def test_exactly_salt_size_file_raises_corruption_error(tmp_path):
+    """load_vault must reject a file that is exactly _SALT_SIZE bytes (no ciphertext)."""
+    vault_file = tmp_path / "vault.enc"
+    vault_file.write_bytes(b"\x00" * 16)
+
+    with pytest.raises(ValueError, match=re.escape("Vault file is truncated or empty")):
+        load_vault(password="any-password", vault_path=vault_file)
 
 
 # ---------------------------------------------------------------------------
