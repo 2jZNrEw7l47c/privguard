@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS findings (
     data_found TEXT,
     status TEXT NOT NULL,
     opt_out_url TEXT,
+    listing_url TEXT,
     manual_instructions TEXT,
     screenshot_path TEXT,
     last_checked DATETIME,
@@ -56,6 +57,10 @@ def init_db(db_path: Path = DB_PATH) -> None:
     conn = _connect(db_path)
     try:
         conn.executescript(_DDL)
+        # migration: add listing_url if missing (existing DBs)
+        cols = [r[1] for r in conn.execute("PRAGMA table_info(findings)").fetchall()]
+        if "listing_url" not in cols:
+            conn.execute("ALTER TABLE findings ADD COLUMN listing_url TEXT")
         conn.commit()
     finally:
         conn.close()
@@ -68,6 +73,7 @@ def upsert_finding(
     site_name: str,
     status: str,
     opt_out_url: str | None = None,
+    listing_url: str | None = None,
     manual_instructions: str | None = None,
     data_found: str | None = None,
     notes: str | None = None,
@@ -92,12 +98,12 @@ def upsert_finding(
                 """
                 INSERT INTO findings
                     (user_display_name, source, site_id, site_name, data_found,
-                     status, opt_out_url, manual_instructions, notes, last_checked)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                     status, opt_out_url, listing_url, manual_instructions, notes, last_checked)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     user_display_name, source, site_id, site_name, data_found,
-                    status, opt_out_url, manual_instructions, notes, now,
+                    status, opt_out_url, listing_url, manual_instructions, notes, now,
                 ),
             )
         else:
@@ -113,6 +119,7 @@ def upsert_finding(
                     data_found = COALESCE(?, data_found),
                     status = ?,
                     opt_out_url = COALESCE(?, opt_out_url),
+                    listing_url = COALESCE(?, listing_url),
                     manual_instructions = COALESCE(?, manual_instructions),
                     notes = COALESCE(?, notes),
                     last_checked = ?
@@ -120,7 +127,7 @@ def upsert_finding(
                 """,
                 (
                     source, site_name, data_found, new_status,
-                    opt_out_url, manual_instructions, notes, now,
+                    opt_out_url, listing_url, manual_instructions, notes, now,
                     user_display_name, site_id,
                 ),
             )

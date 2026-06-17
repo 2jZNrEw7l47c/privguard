@@ -133,6 +133,36 @@ def _scan_brokers(
         except Exception:
             status = "not_found"
 
+        # Generate listing URL from search_url template
+        listing_url: str | None = None
+        search_tpl = broker.get("search_url")
+        if search_tpl:
+            full_name = profile.get("full_name", profile.get("display_name", ""))
+            parts = full_name.strip().split()
+            first = parts[0] if parts else ""
+            last = parts[-1] if len(parts) > 1 else ""
+            name_slug = f"{first}-{last}".lower()
+            city = ""
+            state = ""
+            zip_code = ""
+            for addr in profile.get("addresses", []):
+                if addr.get("current", False) or not city:
+                    city = addr.get("city", "")
+                    state = addr.get("state", "")
+                    zip_code = addr.get("zip", "")
+            primary_email = profile.get("emails", [""])[0] if profile.get("emails") else ""
+            listing_url = (
+                search_tpl
+                .replace("{first_name}", first)
+                .replace("{last_name}", last)
+                .replace("{full_name}", full_name)
+                .replace("{name_slug}", name_slug)
+                .replace("{city}", city)
+                .replace("{state}", state)
+                .replace("{zip}", zip_code)
+                .replace("{primary_email}", primary_email)
+            )
+
         upsert_finding(
             user_display_name=display_name,
             source="brokers",
@@ -140,6 +170,7 @@ def _scan_brokers(
             site_name=broker["name"],
             status=status,
             opt_out_url=url,
+            listing_url=listing_url,
             manual_instructions=broker.get("manual_instructions"),
             db_path=db_path,
         )
